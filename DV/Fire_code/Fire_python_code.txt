@@ -1,0 +1,101 @@
+import requests 
+import pandas as pd
+from urllib.request import urlopen
+import numpy as np
+import re
+import zipfile
+import os
+import time
+import shutil
+import subprocess
+import psycopg2
+localpath = r'C:\Users\svb\Documents\Fire_process'
+path=os.chdir(localpath)
+for file in os.scandir(path):
+    os.remove(file.path)
+def download(url: str, dest_folder: str):
+    if not os.path.exists(dest_folder):
+        os.makedirs(dest_folder)  # create folder if it does not exist
+
+    filename = url.split('/')[-1].replace(" ", "_")  # be careful with file names
+    file_path = os.path.join(dest_folder, filename)
+
+    r = requests.get(url, stream=True)
+    if r.ok:
+        print("saving to", os.path.abspath(file_path))
+        with open(file_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024 * 8):
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+                    os.fsync(f.fileno())
+    else:  # HTTP status code 4XX/5XX
+        print("Download failed: status code {}\n{}".format(r.status_code, r.text))
+
+
+download('https://opendata.arcgis.com/datasets/2191f997056547bd9dc530ab9866ab61_0.zip', dest_folder=localpath)
+arr = os.listdir(path)
+with zipfile.ZipFile(arr[0],'r') as zip_ref:
+        zip_ref.extractall(localpath)
+varc ='Fire_Shape_file_'+time.strftime('%Y%m%d')+'.zip'
+shutil.move('C:/Users/svb/Documents/Fire_process/'+arr[0], 'C:/Users/svb/Documents/Fire_archive/'+varc)
+filetypes = ['shp']
+dir = r'C:\Users\svb\Documents\Fire_process'
+files = [[f for f in os.listdir(dir) if f.endswith(type_)] for type_ in filetypes]
+os.environ['PGHOST'] = 'localhost'
+os.environ['PGPORT'] = '5432'
+os.environ['PGUSER'] = 'postgres'
+os.environ['PGPASSWORD'] = 'veros110'
+os.environ['PGDATABASE'] = 'Disaster_Vision_DB'
+localpath = r'C:\Program Files\PostgreSQL\9.6\bin'
+os.chdir(localpath)
+cmd = 'shp2pgsql -s 0 "C:/Users/svb/Documents/Fire_process/'+files[0][0]+'" public.FH_Perimeter | psql'
+subprocess.call(cmd, shell=True)
+##Postgres Process
+#establishing the connection
+conn = psycopg2.connect(
+    host="localhost",
+    database="Disaster_Vision_DB",
+    user="postgres",
+    password="veros110",port= '5432')
+
+#Setting auto commit false
+conn.autocommit = True
+
+#Creating a cursor object using the cursor() method
+cursor = conn.cursor()
+
+#Step to load fire_shapefile_core_historic table
+#cursor.execute("SELECT public.fire_step_One()")
+#print("Step to load fire_shapefile_core_historic table Done... ")
+
+#Step to replace the FH_Perimeter to fire_shapefile_core table
+cursor.execute("SELECT public.fire_step_Two()")
+print("Step to replace the FH_Perimeter to fire_shapefile_core table Done... ")
+
+#Condition to check if new fires or existing fire update came in
+if(cursor.execute("select public.fire_step_three()")!=0):
+    #Step to create buffer file
+    cursor.execute("SELECT public.fire_step_Four()")
+    print("Step to create buffer file Done... ")
+    
+    #Step to create map core file
+    cursor.execute("SELECT public.fire_step_Five()")
+    print("Step to create map core file Done... ")
+    
+    #Step to create map buffer file
+    cursor.execute("SELECT public.fire_step_Six()")
+    print("Step to create map buffer file Done... ")
+    
+    #Step to create final BKFS file
+    cursor.execute("SELECT public.fire_step_Seven()")
+    print("Step to create final BKFS file Done... ")
+
+
+#Commit your changes in the database
+conn.commit()
+
+#Closing the connection
+conn.close()
+
+#

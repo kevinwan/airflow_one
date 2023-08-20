@@ -1,0 +1,830 @@
+-- Table: public.address_stg
+
+-- DROP TABLE public.address_stg;
+
+CREATE TABLE IF NOT EXISTS public.address_stg
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    address_status character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default"
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.address_stg
+    OWNER to postgres;
+
+
+-- Table: public.address_ca
+
+-- DROP TABLE public.address_ca;
+
+CREATE TABLE IF NOT EXISTS public.address_ca
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    address_status character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default",
+    geom geometry
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.address_ca
+    OWNER to postgres;
+-- Index: geom_gindx_ca
+
+-- DROP INDEX public.geom_gindx_ca;
+
+CREATE INDEX geom_gindx_ca
+    ON public.address_ca USING gist
+    (geom)
+    TABLESPACE pg_default;
+
+
+
+-- Table: public.fire_bkfs_file
+
+-- DROP TABLE public.fire_bkfs_file;
+
+CREATE TABLE IF NOT EXISTS public.fire_bkfs_file
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    veros_identifier text COLLATE pg_catalog."default",
+    disaster_indicator text COLLATE pg_catalog."default",
+    disaster_name character varying(39) COLLATE pg_catalog."default",
+    disaster_type text COLLATE pg_catalog."default",
+    disaster_id text COLLATE pg_catalog."default",
+    veros_start_date date,
+    veros_end_date text COLLATE pg_catalog."default",
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    file_run_date date,
+    fema_incident_start_date text COLLATE pg_catalog."default",
+    fema_incident_end_date text COLLATE pg_catalog."default",
+    event_termination text COLLATE pg_catalog."default",
+    bkfs_indicator text COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    disaster_narrative text COLLATE pg_catalog."default",
+    peak_severity text COLLATE pg_catalog."default",
+    geobox_n double precision,
+    geobox_s double precision,
+    geobox_e double precision,
+    geobox_w double precision,
+    fema__dr_declaration_date text COLLATE pg_catalog."default",
+    fema__fm_declaration_date text COLLATE pg_catalog."default",
+    fema__em_declaration_date text COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default"
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_bkfs_file
+    OWNER to postgres;
+
+
+-- Table: public.fire_geo_box
+
+-- DROP TABLE public.fire_geo_box;
+
+CREATE TABLE IF NOT EXISTS public.fire_geo_box
+(
+    objectid integer,
+    poly_incid character varying(39) COLLATE pg_catalog."default",
+    geobox_n double precision,
+    geobox_s double precision,
+    geobox_e double precision,
+    geobox_w double precision
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_geo_box
+    OWNER to postgres;
+
+-- Table: public.fire_process_check
+
+-- DROP TABLE public.fire_process_check;
+
+CREATE TABLE IF NOT EXISTS public.fire_process_check
+(
+    ct bigint
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_process_check
+    OWNER to postgres;
+
+
+-- Table: public.fire_process_states
+
+-- DROP TABLE public.fire_process_states;
+
+CREATE TABLE IF NOT EXISTS public.fire_process_states
+(
+    stusps character varying(2) COLLATE pg_catalog."default",
+    objectid integer,
+    gid integer,
+    poly_incid character varying(39) COLLATE pg_catalog."default"
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_process_states
+    OWNER to postgres;
+
+-- Table: public.fire_shapefile_buffer
+
+-- DROP TABLE public.fire_shapefile_buffer;
+
+CREATE TABLE IF NOT EXISTS public.fire_shapefile_buffer
+(
+    gid integer,
+    objectid integer,
+    poly_incid character varying(39) COLLATE pg_catalog."default",
+    poly_featu character varying(29) COLLATE pg_catalog."default",
+    poly_mapme character varying(25) COLLATE pg_catalog."default",
+    poly_gisac numeric,
+    poly_creat date,
+    poly_datec date,
+    poly_polyg date,
+    poly_acres numeric,
+    poly_globa character varying(38) COLLATE pg_catalog."default",
+    poly_sourc character varying(9) COLLATE pg_catalog."default",
+    irwin_abcd character varying(4) COLLATE pg_catalog."default",
+    irwin_adsp character varying(7) COLLATE pg_catalog."default",
+    irwin_calc numeric,
+    irwin_cont date,
+    irwin_co_1 date,
+    irwin_dail numeric,
+    irwin_disc numeric,
+    irwin_disp character varying(6) COLLATE pg_catalog."default",
+    irwin_esti numeric,
+    irwin_ffre character varying(1) COLLATE pg_catalog."default",
+    irwin_ff_1 character varying(1) COLLATE pg_catalog."default",
+    irwin_ff_2 date,
+    irwin_fire character varying(8) COLLATE pg_catalog."default",
+    irwin_fi_1 character varying(20) COLLATE pg_catalog."default",
+    irwin_fi_2 character varying(20) COLLATE pg_catalog."default",
+    irwin_fi_3 character varying(20) COLLATE pg_catalog."default",
+    irwin_fi_4 character varying(12) COLLATE pg_catalog."default",
+    irwin_fi_5 character varying(19) COLLATE pg_catalog."default",
+    irwin_fi_6 character varying(14) COLLATE pg_catalog."default",
+    irwin_fi_7 character varying(4) COLLATE pg_catalog."default",
+    irwin_fi_8 character varying(5) COLLATE pg_catalog."default",
+    irwin_fi_9 date,
+    irwin_fi10 character varying(15) COLLATE pg_catalog."default",
+    irwin_fi11 date,
+    irwin_fsco smallint,
+    irwin_fsfu smallint,
+    irwin_fsmo smallint,
+    irwin_fspo smallint,
+    irwin_fsjo character varying(2) COLLATE pg_catalog."default",
+    irwin_fsov character varying(4) COLLATE pg_catalog."default",
+    irwin_gacc character varying(4) COLLATE pg_catalog."default",
+    irwin_ics2 date,
+    irwin_ic_1 date,
+    irwin_ic_2 date,
+    irwin_ic_3 character varying(1) COLLATE pg_catalog."default",
+    irwin_inci character varying(11) COLLATE pg_catalog."default",
+    irwin_in_1 character varying(19) COLLATE pg_catalog."default",
+    irwin_in_2 character varying(79) COLLATE pg_catalog."default",
+    irwin_in_3 character varying(2) COLLATE pg_catalog."default",
+    irwin_in_4 character varying(2) COLLATE pg_catalog."default",
+    irwin_init numeric,
+    irwin_in_5 numeric,
+    irwin_in_6 numeric,
+    irwin_in_7 date,
+    irwin_irwi character varying(38) COLLATE pg_catalog."default",
+    irwin_isfi smallint,
+    irwin_is_1 smallint,
+    irwin_isfs smallint,
+    irwin_ismu smallint,
+    irwin_isre smallint,
+    irwin_istr smallint,
+    irwin_isun smallint,
+    irwin_loca character varying(6) COLLATE pg_catalog."default",
+    irwin_perc numeric,
+    irwin_pe_1 numeric,
+    irwin_pooc character varying(26) COLLATE pg_catalog."default",
+    irwin_po_1 character varying(20) COLLATE pg_catalog."default",
+    irwin_pood character varying(6) COLLATE pg_catalog."default",
+    irwin_poof character varying(5) COLLATE pg_catalog."default",
+    irwin_pooj character varying(4) COLLATE pg_catalog."default",
+    irwin_po_2 character varying(6) COLLATE pg_catalog."default",
+    irwin_po_3 character varying(1) COLLATE pg_catalog."default",
+    irwin_pool character varying(7) COLLATE pg_catalog."default",
+    irwin_po_4 character varying(7) COLLATE pg_catalog."default",
+    irwin_po_5 character varying(10) COLLATE pg_catalog."default",
+    irwin_po_6 character varying(2) COLLATE pg_catalog."default",
+    irwin_po_7 character varying(2) COLLATE pg_catalog."default",
+    irwin_po_8 character varying(3) COLLATE pg_catalog."default",
+    irwin_po_9 smallint,
+    irwin_po10 character varying(3) COLLATE pg_catalog."default",
+    irwin_poop character varying(5) COLLATE pg_catalog."default",
+    irwin_po11 character varying(4) COLLATE pg_catalog."default",
+    irwin_po12 character varying(6) COLLATE pg_catalog."default",
+    irwin_poos character varying(5) COLLATE pg_catalog."default",
+    irwin_pred character varying(11) COLLATE pg_catalog."default",
+    irwin_pr_1 character varying(3) COLLATE pg_catalog."default",
+    irwin_prim character varying(30) COLLATE pg_catalog."default",
+    irwin_seco character varying(30) COLLATE pg_catalog."default",
+    irwin_tota smallint,
+    irwin_uniq character varying(18) COLLATE pg_catalog."default",
+    irwin_wfds character varying(17) COLLATE pg_catalog."default",
+    irwin_crea character varying(8) COLLATE pg_catalog."default",
+    irwin_modi character varying(16) COLLATE pg_catalog."default",
+    irwin_isdi smallint,
+    irwin_orga character varying(15) COLLATE pg_catalog."default",
+    irwin_stra date,
+    irwin_glob character varying(1) COLLATE pg_catalog."default",
+    irwin_sour character varying(5) COLLATE pg_catalog."default",
+    irwin_arch numeric,
+    irwin_mo_1 date,
+    irwin_cr_1 date,
+    globalid character varying(38) COLLATE pg_catalog."default",
+    shape_leng numeric,
+    shape_area numeric,
+    geom geometry(MultiPolygon),
+    buffer_geom geometry
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_shapefile_buffer
+    OWNER to postgres;
+-- Index: geom_gindx_buffer
+
+-- DROP INDEX public.geom_gindx_buffer;
+
+CREATE INDEX geom_gindx_buffer
+    ON public.fire_shapefile_buffer USING gist
+    (buffer_geom)
+    TABLESPACE pg_default;
+
+
+
+-- Table: public.fire_shapefile_buffer_mapped
+
+-- DROP TABLE public.fire_shapefile_buffer_mapped;
+
+CREATE TABLE IF NOT EXISTS public.fire_shapefile_buffer_mapped
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    poly_incid character varying(39) COLLATE pg_catalog."default",
+    objectid integer,
+    irwin_cr_1 date,
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    irwin_perc numeric
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_shapefile_buffer_mapped
+    OWNER to postgres;
+
+
+-- Table: public.fire_shapefile_core
+
+-- DROP TABLE public.fire_shapefile_core;
+
+CREATE TABLE IF NOT EXISTS public.fire_shapefile_core
+(
+    gid integer NOT NULL DEFAULT nextval('"wfigs_-_current_wildland_fire_perimeters_gid_seq1"'::regclass),
+    objectid integer,
+    poly_incid character varying(39) COLLATE pg_catalog."default",
+    poly_featu character varying(29) COLLATE pg_catalog."default",
+    poly_mapme character varying(25) COLLATE pg_catalog."default",
+    poly_gisac numeric,
+    poly_creat date,
+    poly_datec date,
+    poly_polyg date,
+    poly_acres numeric,
+    poly_globa character varying(38) COLLATE pg_catalog."default",
+    poly_sourc character varying(9) COLLATE pg_catalog."default",
+    irwin_abcd character varying(4) COLLATE pg_catalog."default",
+    irwin_adsp character varying(7) COLLATE pg_catalog."default",
+    irwin_calc numeric,
+    irwin_cont date,
+    irwin_co_1 date,
+    irwin_dail numeric,
+    irwin_disc numeric,
+    irwin_disp character varying(6) COLLATE pg_catalog."default",
+    irwin_esti numeric,
+    irwin_ffre character varying(1) COLLATE pg_catalog."default",
+    irwin_ff_1 character varying(1) COLLATE pg_catalog."default",
+    irwin_ff_2 date,
+    irwin_fire character varying(8) COLLATE pg_catalog."default",
+    irwin_fi_1 character varying(20) COLLATE pg_catalog."default",
+    irwin_fi_2 character varying(20) COLLATE pg_catalog."default",
+    irwin_fi_3 character varying(20) COLLATE pg_catalog."default",
+    irwin_fi_4 character varying(12) COLLATE pg_catalog."default",
+    irwin_fi_5 character varying(19) COLLATE pg_catalog."default",
+    irwin_fi_6 character varying(14) COLLATE pg_catalog."default",
+    irwin_fi_7 character varying(4) COLLATE pg_catalog."default",
+    irwin_fi_8 character varying(5) COLLATE pg_catalog."default",
+    irwin_fi_9 date,
+    irwin_fi10 character varying(15) COLLATE pg_catalog."default",
+    irwin_fi11 date,
+    irwin_fsco smallint,
+    irwin_fsfu smallint,
+    irwin_fsmo smallint,
+    irwin_fspo smallint,
+    irwin_fsjo character varying(2) COLLATE pg_catalog."default",
+    irwin_fsov character varying(4) COLLATE pg_catalog."default",
+    irwin_gacc character varying(4) COLLATE pg_catalog."default",
+    irwin_ics2 date,
+    irwin_ic_1 date,
+    irwin_ic_2 date,
+    irwin_ic_3 character varying(1) COLLATE pg_catalog."default",
+    irwin_inci character varying(11) COLLATE pg_catalog."default",
+    irwin_in_1 character varying(19) COLLATE pg_catalog."default",
+    irwin_in_2 character varying(79) COLLATE pg_catalog."default",
+    irwin_in_3 character varying(2) COLLATE pg_catalog."default",
+    irwin_in_4 character varying(2) COLLATE pg_catalog."default",
+    irwin_init numeric,
+    irwin_in_5 numeric,
+    irwin_in_6 numeric,
+    irwin_in_7 date,
+    irwin_irwi character varying(38) COLLATE pg_catalog."default",
+    irwin_isfi smallint,
+    irwin_is_1 smallint,
+    irwin_isfs smallint,
+    irwin_ismu smallint,
+    irwin_isre smallint,
+    irwin_istr smallint,
+    irwin_isun smallint,
+    irwin_loca character varying(6) COLLATE pg_catalog."default",
+    irwin_perc numeric,
+    irwin_pe_1 numeric,
+    irwin_pooc character varying(26) COLLATE pg_catalog."default",
+    irwin_po_1 character varying(20) COLLATE pg_catalog."default",
+    irwin_pood character varying(6) COLLATE pg_catalog."default",
+    irwin_poof character varying(5) COLLATE pg_catalog."default",
+    irwin_pooj character varying(4) COLLATE pg_catalog."default",
+    irwin_po_2 character varying(6) COLLATE pg_catalog."default",
+    irwin_po_3 character varying(1) COLLATE pg_catalog."default",
+    irwin_pool character varying(7) COLLATE pg_catalog."default",
+    irwin_po_4 character varying(7) COLLATE pg_catalog."default",
+    irwin_po_5 character varying(10) COLLATE pg_catalog."default",
+    irwin_po_6 character varying(2) COLLATE pg_catalog."default",
+    irwin_po_7 character varying(2) COLLATE pg_catalog."default",
+    irwin_po_8 character varying(3) COLLATE pg_catalog."default",
+    irwin_po_9 smallint,
+    irwin_po10 character varying(3) COLLATE pg_catalog."default",
+    irwin_poop character varying(5) COLLATE pg_catalog."default",
+    irwin_po11 character varying(4) COLLATE pg_catalog."default",
+    irwin_po12 character varying(6) COLLATE pg_catalog."default",
+    irwin_poos character varying(5) COLLATE pg_catalog."default",
+    irwin_pred character varying(11) COLLATE pg_catalog."default",
+    irwin_pr_1 character varying(3) COLLATE pg_catalog."default",
+    irwin_prim character varying(30) COLLATE pg_catalog."default",
+    irwin_seco character varying(30) COLLATE pg_catalog."default",
+    irwin_tota smallint,
+    irwin_uniq character varying(18) COLLATE pg_catalog."default",
+    irwin_wfds character varying(17) COLLATE pg_catalog."default",
+    irwin_crea character varying(8) COLLATE pg_catalog."default",
+    irwin_modi character varying(16) COLLATE pg_catalog."default",
+    irwin_isdi smallint,
+    irwin_orga character varying(15) COLLATE pg_catalog."default",
+    irwin_stra date,
+    irwin_glob character varying(1) COLLATE pg_catalog."default",
+    irwin_sour character varying(5) COLLATE pg_catalog."default",
+    irwin_arch numeric,
+    irwin_mo_1 date,
+    irwin_cr_1 date,
+    globalid character varying(38) COLLATE pg_catalog."default",
+    shape_leng numeric,
+    shape_area numeric,
+    geom geometry(MultiPolygon),
+    CONSTRAINT "wfigs_-_current_wildland_fire_perimeters_pkey1" PRIMARY KEY (gid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_shapefile_core
+    OWNER to postgres;
+-- Index: wfigs_-_current_wildland_fire_perimeters_geom_idx1
+
+-- DROP INDEX public."wfigs_-_current_wildland_fire_perimeters_geom_idx1";
+
+CREATE INDEX "wfigs_-_current_wildland_fire_perimeters_geom_idx1"
+    ON public.fire_shapefile_core USING gist
+    (geom)
+    TABLESPACE pg_default;
+
+
+-- Table: public.fire_shapefile_core_historic
+
+-- DROP TABLE public.fire_shapefile_core_historic;
+
+CREATE TABLE IF NOT EXISTS public.fire_shapefile_core_historic
+(
+    objectid integer,
+    poly_incid character varying(39) COLLATE pg_catalog."default",
+    poly_gisac numeric,
+    poly_creat date,
+    poly_acres numeric,
+    poly_globa character varying(38) COLLATE pg_catalog."default",
+    irwin_esti numeric,
+    irwin_fire character varying(8) COLLATE pg_catalog."default",
+    irwin_poof numeric
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_shapefile_core_historic
+    OWNER to postgres;
+
+
+-- Table: public.fire_shapefile_core_mapped_2
+
+-- DROP TABLE public.fire_shapefile_core_mapped_2;
+
+CREATE TABLE IF NOT EXISTS public.fire_shapefile_core_mapped_2
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    poly_incid character varying(39) COLLATE pg_catalog."default",
+    objectid integer,
+    irwin_cr_1 date,
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    irwin_perc numeric
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.fire_shapefile_core_mapped_2
+    OWNER to postgres;
+
+
+-- Table: public.hurricane_bkfs_file
+
+-- DROP TABLE public.hurricane_bkfs_file;
+
+CREATE TABLE IF NOT EXISTS public.hurricane_bkfs_file
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    veros_identifier text COLLATE pg_catalog."default",
+    disaster_identifier text COLLATE pg_catalog."default",
+    disaster_name character varying(50) COLLATE pg_catalog."default",
+    disaster_type text COLLATE pg_catalog."default",
+    disaster_id text COLLATE pg_catalog."default",
+    veros_start_date date,
+    veros_end_date date,
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    file_run_date date,
+    fema_incident_start_date text COLLATE pg_catalog."default",
+    fema_incident_end_date text COLLATE pg_catalog."default",
+    event_termination text COLLATE pg_catalog."default",
+    bkfs_indicator text COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    disaster_narrative text COLLATE pg_catalog."default",
+    peak_severity text COLLATE pg_catalog."default",
+    geobox_n double precision,
+    geobox_s double precision,
+    geobox_e double precision,
+    geobox_w double precision,
+    fema__dr_declaration_date text COLLATE pg_catalog."default",
+    fema__fm_declaration_date text COLLATE pg_catalog."default",
+    fema__em_declaration_date text COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default"
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.hurricane_bkfs_file
+    OWNER to postgres;
+
+
+-- Table: public.hurricane_daily_bkfs_buffer
+
+-- DROP TABLE public.hurricane_daily_bkfs_buffer;
+
+CREATE TABLE IF NOT EXISTS public.hurricane_daily_bkfs_buffer
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    address_status character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default"
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.hurricane_daily_bkfs_buffer
+    OWNER to postgres;
+
+-- Table: public.hurricane_daily_bkfs_core
+
+-- DROP TABLE public.hurricane_daily_bkfs_core;
+
+CREATE TABLE IF NOT EXISTS public.hurricane_daily_bkfs_core
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    address_status character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default"
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.hurricane_daily_bkfs_core
+    OWNER to postgres;
+
+-- Table: public.hurricane_shapefile_buffer
+
+-- DROP TABLE public.hurricane_shapefile_buffer;
+
+CREATE TABLE IF NOT EXISTS public.hurricane_shapefile_buffer
+(
+    gid integer,
+    stormname character varying(50) COLLATE pg_catalog."default",
+    stormtype character varying(50) COLLATE pg_catalog."default",
+    advdate character varying(50) COLLATE pg_catalog."default",
+    advisnum character varying(50) COLLATE pg_catalog."default",
+    stormnum numeric,
+    fcstprd numeric,
+    basin character varying(50) COLLATE pg_catalog."default",
+    geom geometry(MultiPolygon),
+    buffer_geom geometry
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.hurricane_shapefile_buffer
+    OWNER to postgres;
+-- Index: geom_hurricane_buffer
+
+-- DROP INDEX public.geom_hurricane_buffer;
+
+CREATE INDEX geom_hurricane_buffer
+    ON public.hurricane_shapefile_buffer USING gist
+    (buffer_geom)
+    TABLESPACE pg_default;
+
+
+-- Table: public.hurricane_shapefile_buffer_mapped
+
+-- DROP TABLE public.hurricane_shapefile_buffer_mapped;
+
+CREATE TABLE IF NOT EXISTS public.hurricane_shapefile_buffer_mapped
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    stormname character varying(50) COLLATE pg_catalog."default",
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    geom geometry
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.hurricane_shapefile_buffer_mapped
+    OWNER to postgres;
+
+-- Table: public.hurricane_shapefile_buffer_mapped_trimmed
+
+-- DROP TABLE public.hurricane_shapefile_buffer_mapped_trimmed;
+
+CREATE TABLE IF NOT EXISTS public.hurricane_shapefile_buffer_mapped_trimmed
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    stormname character varying(50) COLLATE pg_catalog."default",
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    geom geometry,
+    dvlbl character varying(50) COLLATE pg_catalog."default",
+    ssnum numeric,
+    advisnum character varying(50) COLLATE pg_catalog."default"
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.hurricane_shapefile_buffer_mapped_trimmed
+    OWNER to postgres;
+
+-- Table: public.hurricane_shapefile_core
+
+-- DROP TABLE public.hurricane_shapefile_core;
+
+CREATE TABLE IF NOT EXISTS public.hurricane_shapefile_core
+(
+    gid integer,
+    stormname character varying(50) COLLATE pg_catalog."default",
+    stormtype character varying(50) COLLATE pg_catalog."default",
+    advdate character varying(50) COLLATE pg_catalog."default",
+    advisnum character varying(50) COLLATE pg_catalog."default",
+    stormnum numeric,
+    fcstprd numeric,
+    basin character varying(50) COLLATE pg_catalog."default",
+    geom geometry(MultiPolygon)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.hurricane_shapefile_core
+    OWNER to postgres;
+-- Index: Hurricane_shapefile_core_geom_idx1
+
+-- DROP INDEX public."Hurricane_shapefile_core_geom_idx1";
+
+CREATE INDEX "Hurricane_shapefile_core_geom_idx1"
+    ON public.hurricane_shapefile_core USING gist
+    (geom)
+    TABLESPACE pg_default;
+
+-- Table: public.hurricane_shapefile_core_mapped
+
+-- DROP TABLE public.hurricane_shapefile_core_mapped;
+
+CREATE TABLE IF NOT EXISTS public.hurricane_shapefile_core_mapped
+(
+    house_number character varying(100) COLLATE pg_catalog."default",
+    house_direction character varying(100) COLLATE pg_catalog."default",
+    house_street character varying(500) COLLATE pg_catalog."default",
+    house_street_mode character varying(100) COLLATE pg_catalog."default",
+    house_mode_direction character varying(100) COLLATE pg_catalog."default",
+    house_city character varying(500) COLLATE pg_catalog."default",
+    house_unit_number character varying(100) COLLATE pg_catalog."default",
+    house_zip character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    fips_county_name character varying(100) COLLATE pg_catalog."default",
+    fips_county_code character varying(100) COLLATE pg_catalog."default",
+    stormname character varying(50) COLLATE pg_catalog."default",
+    avs_latitude character varying(100) COLLATE pg_catalog."default",
+    avs_longitude character varying(100) COLLATE pg_catalog."default",
+    apn character varying(100) COLLATE pg_catalog."default",
+    owner_record character varying(2000) COLLATE pg_catalog."default",
+    seq_no character varying(100) COLLATE pg_catalog."default",
+    geom geometry
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.hurricane_shapefile_core_mapped
+    OWNER to postgres;

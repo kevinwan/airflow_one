@@ -1,0 +1,67 @@
+import requests 
+import pandas as pd
+from urllib.request import urlopen
+import numpy as np
+import re
+import zipfile
+import os, sys, tarfile
+import time
+import shutil
+import subprocess
+import psycopg2
+localpath = r'E:\DV\Tornado_process\extractDamage'
+path=os.chdir(localpath)
+#for file in os.scandir(path):
+    #os.remove(file.path)
+os.chdir(localpath)
+arr = os.listdir(path)
+#dest = shutil.move(source, destination, copy_function = shutil.copytree)
+# open file
+#file = tarfile.open('national_shapefile_obs.tgz') 
+# extracting file
+#file.extractall('.')  
+#file.close()
+os.environ['PGHOST'] = 'localhost'
+os.environ['PGPORT'] = '5432'
+os.environ['PGUSER'] = 'postgres'
+os.environ['PGPASSWORD'] = 'veros110'
+os.environ['PGDATABASE'] = 'Disaster_Vision_DB'
+localpath = r'C:\Program Files\PostgreSQL\9.6\bin'
+os.chdir(localpath)
+cmd = 'shp2pgsql -s 0 "E:/DV/Tornado_process/extractDamage/nws_dat_damage_paths.shp" public.nws_dat_damage_paths | psql'
+subprocess.call(cmd, shell=True)
+##Postgres Process
+#establishing the connection
+conn = psycopg2.connect(
+    host="localhost",
+    database="Disaster_Vision_DB",
+    user="postgres",
+    password="veros110",port= '5432')
+
+#Setting auto commit false
+conn.autocommit = True
+#Creating a cursor object using the cursor() method
+cursor = conn.cursor()
+
+#Step to load fire_shapefile_core_historic table
+#cursor.execute("SELECT public.fire_step_One()")
+#print("Step to load fire_shapefile_core_historic table Done... ")
+
+#Step to replace the FH_Perimeter to fire_shapefile_core table
+cursor.execute("SELECT public.Tornado_step1()")
+if(cursor.execute("select public.Tornado_step_two()")!=0):
+    #Step to process core file
+    cursor.execute("SELECT public.tornado_map_core()")
+    print("Step to process code core file Done... ")
+    cursor.execute("SELECT public.tornado_map_buffer()")
+    print("Step to process code buffer file Done... ")
+    #Step to create final BKFS file
+    cursor.execute("SELECT public.tornado_bkfs_file()")
+    print("Step to create final BKFS file Done... ")
+else:cursor.execute("SELECT public.Tornado_bkfs_file_next()")
+
+#Commit your changes in the database
+conn.commit()
+
+#Closing the connection
+conn.close()

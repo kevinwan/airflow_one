@@ -1,0 +1,126 @@
+-- FUNCTION: public.fire_step_five()
+
+-- DROP FUNCTION public.fire_step_five();
+
+CREATE OR REPLACE FUNCTION public.fire_step_five(
+	)
+    RETURNS void
+    LANGUAGE 'sql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+drop table if exists  public.fire_shapefile_core_mapped_2;
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc into public.fire_shapefile_core_mapped_2 from (
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_ca a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+			,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+			from public.address_az a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+			where poly_gisac>5000 and irwin_esti>100000
+			union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_co a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_fl a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_hi a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_nv a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_or a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_ut a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_wa a join public.fire_shapefile_core b on ST_Contains( b.geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000)i;
+$BODY$;
+
+ALTER FUNCTION public.fire_step_five()
+    OWNER TO postgres;
+
+
+-- FUNCTION: public.fire_step_six()
+
+-- DROP FUNCTION public.fire_step_six();
+
+CREATE OR REPLACE FUNCTION public.fire_step_six(
+	)
+    RETURNS void
+    LANGUAGE 'sql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+drop table if exists  public.fire_shapefile_buffer_mapped;
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc into public.fire_shapefile_buffer_mapped from (
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_ca a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+			,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+			from public.address_az a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+			where poly_gisac>5000 and irwin_esti>100000
+			union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_co a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_fl a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_hi a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_nv a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_or a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_ut a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000
+		union
+		select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip,state,fips_county_name,fips_county_code,poly_incid
+		,objectid,irwin_cr_1,avs_latitude,avs_longitude,apn,owner_record,seq_no,irwin_perc 
+		from public.address_wa a join public.fire_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom)
+		where poly_gisac>5000 and irwin_esti>100000)i;
+$BODY$;
+
+ALTER FUNCTION public.fire_step_six()
+    OWNER TO postgres;

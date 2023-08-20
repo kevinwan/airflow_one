@@ -1,0 +1,39 @@
+import requests 
+import pandas as pd
+from urllib.request import urlopen
+import numpy as np
+import re
+import zipfile
+import os
+import time
+import shutil
+localpath = r'C:\Users\svb\Documents\Fire_process'
+path=os.chdir(localpath)
+for file in os.scandir(path):
+    os.remove(file.path)
+def download(url: str, dest_folder: str):
+    if not os.path.exists(dest_folder):
+        os.makedirs(dest_folder)  # create folder if it does not exist
+
+    filename = url.split('/')[-1].replace(" ", "_")  # be careful with file names
+    file_path = os.path.join(dest_folder, filename)
+
+    r = requests.get(url, stream=True)
+    if r.ok:
+        print("saving to", os.path.abspath(file_path))
+        with open(file_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024 * 8):
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+                    os.fsync(f.fileno())
+    else:  # HTTP status code 4XX/5XX
+        print("Download failed: status code {}\n{}".format(r.status_code, r.text))
+
+
+download('https://opendata.arcgis.com/datasets/2191f997056547bd9dc530ab9866ab61_0.zip', dest_folder=localpath)
+arr = os.listdir(path)
+with zipfile.ZipFile(arr[0],'r') as zip_ref:
+        zip_ref.extractall(localpath)
+varc ='Fire_Shape_file_'+time.strftime('%Y%m%d')+'.zip'
+shutil.move('C:/Users/svb/Documents/Fire_process/'+arr[0], 'C:/Users/svb/Documents/Fire_archive/'+varc)

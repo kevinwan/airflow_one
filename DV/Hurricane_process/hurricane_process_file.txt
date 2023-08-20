@@ -1,0 +1,164 @@
+import requests 
+import pandas as pd
+from urllib.request import urlopen
+import numpy as np
+import re
+import zipfile
+import os
+import time
+import shutil
+import subprocess
+import psycopg2
+localpath = r'E:\DV\Hurricane_process'
+path=os.chdir(localpath)
+#for file in os.scandir(path):
+    #os.remove(file.path)
+os.environ['PGHOST'] = 'localhost'
+os.environ['PGPORT'] = '5432'
+os.environ['PGUSER'] = 'postgres'
+os.environ['PGPASSWORD'] = 'veros110'
+os.environ['PGDATABASE'] = 'Disaster_Vision_DB'
+localpath = r'C:\Program Files\PostgreSQL\9.6\bin'
+os.chdir(localpath)
+cmd = 'shp2pgsql -s 0 E:\DV\Hurricane_process\Hurricane.shp public.Hurricane | psql'
+subprocess.call(cmd, shell=True)
+cmd = 'shp2pgsql -s 0 E:\DV\Hurricane_process\Hurricane_buffer.shp public.Hurricane_buffer | psql'
+subprocess.call(cmd, shell=True)
+##Postgres Process
+#establishing the connection
+conn = psycopg2.connect(
+    host="localhost",
+    database="Disaster_Vision_DB",
+    user="postgres",
+    password="veros110",port= '5432')
+
+#Setting auto commit false
+conn.autocommit = True
+cursor = conn.cursor()
+
+#Step to load fire_shapefile_core_historic table
+#cursor.execute("SELECT public.fire_step_One()")
+#print("Step to load fire_shapefile_core_historic table Done... ")
+
+#Step to replace the FH_Perimeter to fire_shapefile_core table
+cursor.execute("SELECT public.Hurricane_step_one()")
+print("Step to create hurricane core and buffer file... ")
+
+
+
+#Commit your changes in the database
+conn.commit()
+
+#Closing the connection
+conn.close()
+
+
+-----Below are the SQL queries 
+
+truncate table public.Hurricane_dailydetails
+
+INSERT INTO public.hurricane_dailydetails(
+	hurricane_name, start_date, end_date, category)
+	VALUES ('Ian','2022-09-23','2022-09-30', 'CAT 4');
+
+select * from public.hurricane_dailydetails
+
+drop table if exists public.Hurricane_shapefile_core_mapped;
+select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip
+,state,fips_county_name,fips_county_code,stormname
+		,avs_latitude,avs_longitude,apn,owner_record,seq_no,geom into public.Hurricane_shapefile_core_mapped from 
+(select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number
+ ,house_zip,state,fips_county_name,a.fips_county_code,avs_latitude,avs_longitude,apn,owner_record,seq_no
+ ,a.geom,(Select Hurricane_Name from public.Hurricane_dailydetails) as stormname from public.address_fl
+ a join public.Hurricane_shapefile_core b on ST_Contains( b.geom,a.geom))i
+
+drop table if exists public.Hurricane_shapefile_buffer_mapped;
+select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number,house_zip
+,state,fips_county_name,fips_county_code,stormname
+		,avs_latitude,avs_longitude,apn,owner_record,seq_no,geom into public.Hurricane_shapefile_buffer_mapped from 
+(select house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number
+ ,house_zip,state,fips_county_name,a.fips_county_code,avs_latitude,avs_longitude,apn,owner_record,seq_no
+ ,a.geom,(Select Hurricane_Name from public.Hurricane_dailydetails) as stormname from public.address_fl
+ a join public.Hurricane_shapefile_buffer b on ST_Contains( b.Buffer_geom,a.geom))i
+
+
+
+select * from public.Hurricane_bkfs_file limit 100
+drop table public.Hurricane_bkfs_file
+---select * from public.tl_2020_us_county limit 100
+select  HOUSE_NUMBER,HOUSE_DIRECTION,HOUSE_STREET,HOUSE_STREET_MODE,HOUSE_MODE_DIRECTION,HOUSE_CITY,HOUSE_UNIT_NUMBER,HOUSE_ZIP
+		,STATE,FIPS_COUNTY_NAME,FIPS_COUNTY_CODE,VEROS_IDENTIFIER,DISASTER_IDENTIFIER,stormname as DISASTER_NAME,cast('Hurricane' as varchar(100)) as DISASTER_TYPE
+		,'123' as DISASTER_ID,VEROS_START_DATE as VEROS_START_DATE
+		,VEROS_END_DATE,AVS_LATITUDE,AVS_LONGITUDE,to_char(FILE_RUN_DATE, 'MM/DD/YYYY') as FILE_RUN_DATE,FEMA_INCIDENT_START_DATE
+		,FEMA_INCIDENT_END_DATE,EVENT_TERMINATION,BKFS_INDICATOR,APN,DISASTER_NARRATIVE,PEAK_SEVERITY,GEOBOX_N
+		,GEOBOX_S,GEOBOX_E,GEOBOX_W,FEMA__DR_DECLARATION_DATE,FEMA__FM_DECLARATION_DATE,FEMA__EM_DECLARATION_DATE,OWNER_RECORD  
+		into public.Hurricane_bkfs_file
+		from (
+select b.*,VEROS_START_DATE,VEROS_END_DATE,category as PEAK_SEVERITY,GEOBOX_N
+		,GEOBOX_S,GEOBOX_E,GEOBOX_W from (
+		select distinct a.*,(case when b.seq_no is null then 'IN BUFFER' else 'INSIDE EVENT' end  ) as DISASTER_IDENTIFIER
+		,concat(a.fips_county_code,'_',a.seq_no) as VEROS_IDENTIFIER
+		,'N' as EVENT_TERMINATION
+		,current_date as FILE_RUN_DATE
+		,null as FEMA_INCIDENT_START_DATE
+		,null as FEMA_INCIDENT_END_DATE
+		,null as BKFS_INDICATOR
+		,null as DISASTER_NARRATIVE
+		,null as FEMA__DR_DECLARATION_DATE		
+		,null as FEMA__FM_DECLARATION_DATE
+		,null as FEMA__EM_DECLARATION_DATE
+		from public.Hurricane_shapefile_buffer_mapped a left join 
+		public.Hurricane_shapefile_core_mapped b on a.fips_county_code=b.fips_county_code and a.seq_no=b.seq_no) b
+		join (
+select hurricane_name as stormname,start_date as VEROS_START_DATE,end_date as VEROS_END_DATE,category 
+			  from public.Hurricane_dailydetails) g on trim(b.stormname)=trim(g.stormname)
+join (select stormname, max(cast(avs_latitude as float)) as geobox_n,
+min(cast(avs_latitude as float)) as geobox_s,
+max(cast(avs_longitude as float)) as geobox_e,
+min(cast(avs_longitude as float)) as geobox_w
+from public.Hurricane_shapefile_buffer_mapped
+group by stormname) h on b.stormname=h.stormname) y
+
+insert into public.disaster_id_file
+select a.disaster_name
+,((select max(cast(disaster_id as integer)) as disaster_id from public.disaster_id_file)+row_number()over(order by a.disaster_name)) AS disaster_id
+from public.Hurricane_bkfs_file a left join public.disaster_id_file b on a.disaster_name=b.disaster_name
+where b.disaster_name is null
+group by a.disaster_name;
+
+COPY (select (case when HOUSE_NUMBER='-1' then null else HOUSE_NUMBER end) as HOUSE_NUMBER,
+(case when HOUSE_DIRECTION='-1' then null else HOUSE_DIRECTION end) as HOUSE_DIRECTION,
+(case when HOUSE_STREET='-1' then null else HOUSE_STREET end) as HOUSE_STREET,
+(case when HOUSE_STREET_MODE='-1' then null else HOUSE_STREET_MODE end) as HOUSE_STREET_MODE,
+(case when HOUSE_MODE_DIRECTION='-1' then null else HOUSE_MODE_DIRECTION end) as HOUSE_MODE_DIRECTION,
+(case when HOUSE_CITY='-1' then null else HOUSE_CITY end) as HOUSE_CITY,
+(case when HOUSE_UNIT_NUMBER='-1' then null else HOUSE_UNIT_NUMBER end) as HOUSE_UNIT_NUMBER,
+(case when HOUSE_ZIP='-1' then null else HOUSE_ZIP end) as HOUSE_ZIP,
+(case when STATE='-1' then null else STATE end) as STATE,
+FIPS_COUNTY_NAME,
+FIPS_COUNTY_CODE,
+VEROS_IDENTIFIER,
+DISASTER_IDENTIFIER,
+INITCAP(a.Disaster_name) as "disaster_name", --a.DISASTER_NAME
+DISASTER_TYPE,
+b.DISASTER_ID,
+to_char(VEROS_START_DATE, 'MM/DD/YYYY') as VEROS_START_DATE,
+to_char(VEROS_END_DATE, 'MM/DD/YYYY') as VEROS_END_DATE,
+AVS_LATITUDE,
+AVS_LONGITUDE, FILE_RUN_DATE,
+FEMA_INCIDENT_START_DATE,
+FEMA_INCIDENT_END_DATE,
+EVENT_TERMINATION,
+BKFS_INDICATOR,
+APN,
+DISASTER_NARRATIVE,
+PEAK_SEVERITY,
+GEOBOX_N,
+GEOBOX_S,
+GEOBOX_E,
+GEOBOX_W,
+FEMA__DR_DECLARATION_DATE,
+FEMA__FM_DECLARATION_DATE,
+FEMA__EM_DECLARATION_DATE,
+OWNER_RECORD from public.Hurricane_bkfs_file a join public.disaster_id_file b on a.disaster_name=b.disaster_name) TO 'E:\\DV\\Hurricane_process\\Hurricane_output\\Hurricane_output.txt' WITH DELIMITER E'\t';					
+

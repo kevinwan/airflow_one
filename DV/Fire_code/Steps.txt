@@ -1,0 +1,60 @@
+import requests 
+import pandas as pd
+from urllib.request import urlopen
+import numpy as np
+import re
+import zipfile
+import os
+import time
+import shutil
+localpath = r'C:\Users\svb\Documents\Fire_process'  #renamed localpath destination to \\oc1-nas21.lan.veros.com\home\svb\Files_Disaster\Fire_process
+path=os.chdir(localpath)
+for file in os.scandir(path):
+    os.remove(file.path)
+def download(url: str, dest_folder: str):
+    if not os.path.exists(dest_folder):
+        os.makedirs(dest_folder)  # create folder if it does not exist
+
+    filename = url.split('/')[-1].replace(" ", "_")  # be careful with file names
+    file_path = os.path.join(dest_folder, filename)
+
+    r = requests.get(url, stream=True)
+    if r.ok:
+        print("saving to", os.path.abspath(file_path))
+        with open(file_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024 * 8):
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+                    os.fsync(f.fileno())
+    else:  # HTTP status code 4XX/5XX
+        print("Download failed: status code {}\n{}".format(r.status_code, r.text))
+
+
+download('https://opendata.arcgis.com/datasets/2191f997056547bd9dc530ab9866ab61_0.zip', dest_folder=localpath)
+arr = os.listdir(path)
+with zipfile.ZipFile(arr[0],'r') as zip_ref:
+        zip_ref.extractall(localpath)   #manually renamed shapefile to wfigs_current_wildland_fire_perimeters from FH_Perimeters
+varc ='Fire_Shape_file_'+time.strftime('%Y%m%d')+'.zip'
+shutil.move('C:/Users/svb/Documents/Fire_process/'+arr[0], 'C:/Users/svb/Documents/Fire_archive/'+varc)
+
+
+IMPORT TOOL
+-initial uploading of the fire shapefile did not create a geom column to use. In the re-upload, it worked as intended
+
+
+
+select public.fire_initial_step()
+
+select public.fire_newtransactions_step()
+
+
+select * from public.Fire_process_check  -- This should be >0
+select public.fire_buffer_file_creation()  
+	#initial run did not work because geom column was not created in file_shapefile_core table
+	#changed buffer value from 0.217404(15mi) to 0.002745 (1000ft)
+	#15mi is used for hurricanes and 1000ft is used to tornadoes and fires. 
+	#for floods, gauges with a action/flood/minor status gets a 0.0144936 (1mi) buffer and gauges with a moderate/major status a 0.0289872 (2mi) buffer
+select public.fire_shapefile_core_mapped_function()
+select public.fire_shapefile_buffer_mapped_function()
+select public.fire_BKFA_function()

@@ -1,0 +1,1 @@
+shp2pgsql -s 0 "C:/Users/svb/Documents/Tornado_demo/extractDamage/nws_dat_damage_pnts.shp" public.nws_dat_damage_pnts | psql -h localhost -p 5432 -U postgres -d Disaster_Vision_DB

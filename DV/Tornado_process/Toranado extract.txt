@@ -1,0 +1,9 @@
+COPY (SELECT house_number,house_direction,house_street,house_street_mode,house_mode_direction,house_city,house_unit_number
+	  ,house_zip,state,fips_county_name,fips_county_code,veros_identifier,disaster_identifier
+	  ,a.disaster_name,disaster_type,b.disaster_id,veros_start_date,veros_end_date,avs_latitude
+	  ,avs_longitude,file_run_date,null as fema_incident_start_date,null as fema_incident_end_date,event_termination
+	  ,bkfs_indicator,apn,null as disaster_narrative,peak_severity,geobox_n,geobox_s,geobox_e,geobox_w,
+	  null as fema__dr_declaration_date,null as fema__fm_declaration_date,null as fema__em_declaration_date,owner_record
+ FROM public.tornado_bkfs_file a join public.disaster_id_file b on a.disaster_name=b.disaster_name
+	 where  avs_latitude>'0' and avs_latitude not like '%e%') 
+ TO 'E:\BKFS_Daily_check\Check_folder\Demo1.txt' WITH DELIMITER E'\t' NULL AS '';

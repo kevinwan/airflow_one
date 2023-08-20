@@ -1,0 +1,4 @@
+airflow20_env/
+pgdata/
+data/
+.vscode/
